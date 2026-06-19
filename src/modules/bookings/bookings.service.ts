@@ -53,39 +53,44 @@ export class BookingsService {
   }
 
   async findAll(query: BaseQueryDto & { status?: BookingStatus }) {
-    const page = query.page || 1;
-    const limit = query.limit || 10;
+    const page = Number(query?.page) || 1;
+    const limit = Number(query?.limit) || 10;
     const skip = (page - 1) * limit;
-
-    const allowedSortFields = ['createdAt', 'travelDate', 'fullName', 'status'] as const;
-
-    const sort = allowedSortFields.includes(query.sort as any)
+  
+    const allowedSortFields = [
+      'createdAt',
+      'travelDate',
+      'fullName',
+      'status',
+    ] as const;
+  
+    const sort = allowedSortFields.includes(query?.sort as any)
       ? query.sort
       : 'createdAt';
-
-    const order = query.order === 'asc' ? 'asc' : 'desc';
-
+  
+    const order = query?.order === 'asc' ? 'asc' : 'desc';
+  
     const where: Prisma.BookingWhereInput = {};
-
-    if (query.search) {
+  
+    if (query?.search) {
       where.OR = [
         { fullName: { contains: query.search, mode: 'insensitive' } },
         { email: { contains: query.search, mode: 'insensitive' } },
         { phone: { contains: query.search, mode: 'insensitive' } },
       ];
     }
-
-    if (query.status) {
+  
+    if (query?.status) {
       where.status = query.status;
     }
-
+  
     const [data, total] = await Promise.all([
       this.prisma.booking.findMany({
         where,
         skip,
         take: limit,
         orderBy: {
-          [sort]: order,
+          [sort as string]: order,
         },
         include: {
           package: true,
@@ -93,7 +98,7 @@ export class BookingsService {
       }),
       this.prisma.booking.count({ where }),
     ]);
-
+  
     return successResponse('Bookings fetched successfully', data, {
       page,
       limit,
