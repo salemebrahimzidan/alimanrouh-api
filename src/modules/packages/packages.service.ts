@@ -9,16 +9,15 @@ import { UpdatePackageDto } from './dto/update-package.dto';
 @Injectable()
 export class PackagesService {
   constructor(private readonly prisma: PrismaService) {}
-
-  create(data: CreatePackageDto, file?: Express.Multer.File) {
+  create(data: CreatePackageDto, imageUrl?: string) {
     return this.prisma.package.create({
       data: {
         title: data.title,
         description: data.description ?? '',
-        price: data.price,
-        duration: data.duration,
+        price: Number(data.price),
+        duration: data.duration ? Number(data.duration) : null,
         isActive: data.isActive ?? true,
-        imageUrl: file ? `/uploads/packages/${file.filename}` : null,
+        imageUrl: imageUrl ?? null,
       },
     });
   }

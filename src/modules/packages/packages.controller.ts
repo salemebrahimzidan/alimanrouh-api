@@ -11,7 +11,6 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { BaseQueryDto } from '../../common/dto/base-query.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -19,18 +18,21 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
 
+import { BaseQueryDto } from '../../common/dto/base-query.dto';
+import { CloudinaryService } from '../../common/services/cloudinary.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { PackagesService } from './packages.service';
 import { CreatePackageDto } from './dto/create-package.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
+import { PackagesService } from './packages.service';
 
 @ApiTags('Packages')
 @Controller('packages')
 export class PackagesController {
-  constructor(private readonly packagesService: PackagesService) {}
+  constructor(
+    private readonly packagesService: PackagesService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
@@ -56,33 +58,22 @@ export class PackagesController {
       },
     },
   })
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads/packages',
-        filename: (_, file, callback) => {
-          const uniqueName =
-            Date.now() +
-            '-' +
-            Math.round(Math.random() * 1e9) +
-            extname(file.originalname);
-
-          callback(null, uniqueName);
-        },
-      }),
-    }),
-  )
-  create(
+  @UseInterceptors(FileInterceptor('file'))
+  async create(
     @Body() dto: CreatePackageDto,
     @UploadedFile() file?: Express.Multer.File,
   ) {
-    return this.packagesService.create(dto, file);
+    const imageUrl = file
+      ? await this.cloudinaryService.uploadImage(file)
+      : undefined;
+
+    return this.packagesService.create(dto, imageUrl);
   }
 
   @Get()
-findAll(@Query() query: BaseQueryDto) {
-  return this.packagesService.findAll(query as any);
-}
+  findAll(@Query() query: BaseQueryDto) {
+    return this.packagesService.findAll(query as any);
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
