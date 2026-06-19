@@ -36,8 +36,10 @@ async function bootstrap() {
     origin: [
       'http://localhost:3000',
       'http://localhost:5173',
+      'https://alimanrouh-admin.vercel.app',
       'https://alimanrouh.com',
       'https://www.alimanrouh.com',
+
     ],
     credentials: true,
   });
