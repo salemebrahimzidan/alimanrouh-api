@@ -34,10 +34,12 @@ async function bootstrap() {
 
   app.enableCors({
     origin: [
-      'http://localhost:3000',
-      'http://localhost:5173',
-      'https://alimanrouh.com',
-      'https://www.alimanrouh.com',
+     'http://localhost:3000',
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'https://alimanrouh-admin.vercel.app',
+    'https://alimanrouh.com',
+    'https://www.alimanrouh.com',
     ],
     credentials: true,
   });
