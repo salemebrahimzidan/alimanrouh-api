@@ -17,6 +17,7 @@ import {
   ApiConsumes,
   ApiTags,
 } from '@nestjs/swagger';
+import { memoryStorage } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { BaseQueryDto } from '../../common/dto/base-query.dto';
@@ -58,7 +59,11 @@ export class PackagesController {
       },
     },
   })
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: memoryStorage(),
+    }),
+  )
   async create(
     @Body() dto: CreatePackageDto,
     @UploadedFile() file?: Express.Multer.File,
