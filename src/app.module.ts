@@ -12,6 +12,7 @@ import { MailModule } from './modules/mail/mail.module';
 import { PackagesModule } from './modules/packages/packages.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { UsersModule } from './modules/users/users.module';
+import { SettingsModule } from './modules/settings/settings.module';
 
 @Module({
   imports: [
@@ -28,7 +29,6 @@ import { UsersModule } from './modules/users/users.module';
     ]),
 
     PrismaModule,
-
     AuthModule,
     PackagesModule,
     BookingsModule,
@@ -37,6 +37,8 @@ import { UsersModule } from './modules/users/users.module';
     DashboardModule,
     UploadModule,
     MailModule,
+    SettingsModule,
+    
   ],
 })
 export class AppModule {}

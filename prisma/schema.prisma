@@ -82,3 +82,23 @@ enum BookingStatus {
   CONFIRMED
   CANCELLED
 }
+model SiteSettings {
+  id        String   @id @default(cuid())
+
+  siteName  String
+  email     String
+  phone     String
+  whatsapp  String
+  address   String?
+
+  facebook  String?
+  instagram String?
+  youtube   String?
+  twitter   String?
+
+  logo      String?
+  heroImage String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
